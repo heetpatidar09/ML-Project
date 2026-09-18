@@ -4,329 +4,503 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Weather Prediction System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --sky-deep: #0b3d63;
-    --sky-mid: #1e6fa8;
-    --sky-light: #5aa9dc;
-    --sky-pale: #eaf5ff;
-    --accent-rain: #2f6f9f;
-    --accent-clear: #f2a93b;
-    --card-bg: #ffffff;
-    --text-dark: #1c2b36;
-    --text-muted: #5a6b78;
-    --shadow-soft: 0 20px 45px rgba(11, 61, 99, 0.25);
-    --radius-lg: 22px;
-    --radius-md: 14px;
-    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  :root{
+    --navy-950:#081a2e;
+    --navy-900:#0c2744;
+    --navy-800:#133a63;
+    --blue-600:#2f7fc7;
+    --blue-400:#6bb3ea;
+    --ice-50:#f3f9ff;
+    --ice-100:#e6f2fc;
+    --line:#d9e7f5;
+    --ink:#0e1f33;
+    --ink-soft:#5c7085;
+    --amber-500:#f2a541;
+    --amber-600:#e0912b;
+    --rain-500:#3f8fd1;
+    --danger:#d64545;
+    --danger-bg:#fdecec;
+    --r-sm:10px;
+    --r-md:16px;
+    --r-lg:26px;
+    --shadow:0 30px 60px -20px rgba(8,26,46,0.45);
+    --font-display:'Sora', sans-serif;
+    --font-body:'Inter', sans-serif;
   }
 
-  * {
-    box-sizing: border-box;
+  *{ box-sizing:border-box; }
+
+  html,body{ height:100%; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:var(--font-body);
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 18px;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(107,179,234,0.35) 0%, transparent 42%),
+      radial-gradient(circle at 90% 85%, rgba(242,165,65,0.14) 0%, transparent 40%),
+      linear-gradient(155deg, var(--navy-950) 0%, var(--navy-900) 55%, var(--navy-800) 100%);
+    position:relative;
+    overflow-x:hidden;
   }
 
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 16px;
-    background: radial-gradient(circle at 20% 15%, #79c2f0 0%, transparent 45%),
-                radial-gradient(circle at 85% 10%, #cdeaff 0%, transparent 40%),
-                linear-gradient(160deg, var(--sky-deep) 0%, var(--sky-mid) 45%, var(--sky-light) 100%);
-    background-attachment: fixed;
-    color: var(--text-dark);
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
+  /* ambient stars */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
     background-image:
-      radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.5) 0, transparent 50%),
-      radial-gradient(2px 2px at 80% 30%, rgba(255,255,255,0.35) 0, transparent 50%),
-      radial-gradient(3px 3px at 60% 70%, rgba(255,255,255,0.25) 0, transparent 50%),
-      radial-gradient(2px 2px at 30% 80%, rgba(255,255,255,0.3) 0, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
+      radial-gradient(1.5px 1.5px at 8% 15%, rgba(255,255,255,0.55) 0, transparent 55%),
+      radial-gradient(1.5px 1.5px at 75% 22%, rgba(255,255,255,0.4) 0, transparent 55%),
+      radial-gradient(2px 2px at 55% 65%, rgba(255,255,255,0.3) 0, transparent 55%),
+      radial-gradient(1.5px 1.5px at 25% 78%, rgba(255,255,255,0.35) 0, transparent 55%),
+      radial-gradient(1.5px 1.5px at 92% 60%, rgba(255,255,255,0.3) 0, transparent 55%);
+    pointer-events:none;
+    z-index:0;
   }
 
-  .wrapper {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 480px;
+  .stage{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:920px;
   }
 
-  .card {
-    background: var(--card-bg);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-soft);
-    padding: 36px 32px 32px;
-    animation: riseIn 0.6s ease-out;
+  .panel{
+    display:grid;
+    grid-template-columns:0.85fr 1fr;
+    background:var(--ice-50);
+    border-radius:var(--r-lg);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    animation:riseIn 0.7s cubic-bezier(.22,.61,.36,1);
   }
 
-  @keyframes riseIn {
-    from { opacity: 0; transform: translateY(18px); }
-    to { opacity: 1; transform: translateY(0); }
+  @keyframes riseIn{
+    from{ opacity:0; transform:translateY(22px); }
+    to{ opacity:1; transform:translateY(0); }
   }
 
-  .header {
-    text-align: center;
-    margin-bottom: 28px;
+  /* ---------- LEFT: scene panel ---------- */
+  .scene{
+    position:relative;
+    background:linear-gradient(160deg, var(--navy-800) 0%, var(--blue-600) 130%);
+    color:#fff;
+    padding:40px 32px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    min-height:560px;
+    overflow:hidden;
+    transition:background 0.8s ease;
   }
 
-  .header h1 {
-    margin: 0 0 8px;
-    font-size: 1.7rem;
-    font-weight: 700;
-    color: var(--sky-deep);
-    letter-spacing: -0.3px;
+  .scene.state-rain{
+    background:linear-gradient(160deg, #0e2c47 0%, var(--rain-500) 140%);
+  }
+  .scene.state-clear{
+    background:linear-gradient(160deg, #16324f 0%, var(--amber-600) 150%);
   }
 
-  .header p {
-    margin: 0;
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    line-height: 1.4;
+  .scene-top .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--font-body);
+    font-size:0.72rem;
+    font-weight:600;
+    color:rgba(255,255,255,0.7);
+    text-transform:uppercase;
+    letter-spacing:1.4px;
+    margin-bottom:18px;
   }
 
-  .field {
-    margin-bottom: 18px;
+  .eyebrow .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:#7fe0a8;
+    box-shadow:0 0 0 4px rgba(127,224,168,0.25);
   }
 
-  .field label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--sky-deep);
-    margin-bottom: 6px;
+  .scene-top h1{
+    font-family:var(--font-display);
+    font-size:2rem;
+    font-weight:700;
+    line-height:1.15;
+    margin:0 0 12px;
+    letter-spacing:-0.5px;
   }
 
-  .field input {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: var(--radius-md);
-    border: 1.5px solid #d7e6f0;
-    background: var(--sky-pale);
-    font-size: 0.95rem;
-    color: var(--text-dark);
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  .scene-top p{
+    font-size:0.95rem;
+    line-height:1.55;
+    color:rgba(255,255,255,0.78);
+    max-width:32ch;
+    margin:0;
   }
 
-  .field input::placeholder {
-    color: #9fb3c0;
+  /* animated svg sky */
+  .sky{
+    position:relative;
+    height:150px;
+    margin:26px 0 6px;
   }
 
-  .field input:focus {
-    border-color: var(--sky-mid);
-    background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(30, 111, 168, 0.12);
+  .sun{
+    position:absolute;
+    left:14px;
+    top:18px;
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffe6ad, var(--amber-500));
+    box-shadow:0 0 40px 8px rgba(242,165,65,0.55);
+    transition:opacity 0.6s ease, transform 0.6s ease;
   }
 
-  .field input.invalid {
-    border-color: #d9534f;
-    box-shadow: 0 0 0 4px rgba(217, 83, 79, 0.12);
+  .cloud{
+    position:absolute;
+    background:#fff;
+    border-radius:50px;
+    opacity:0.92;
+  }
+  .cloud::before, .cloud::after{
+    content:"";
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+  }
+  .c1{ width:110px; height:34px; top:30px; left:70px; animation:drift 14s linear infinite; }
+  .c1::before{ width:48px; height:48px; top:-24px; left:14px; }
+  .c1::after{ width:36px; height:36px; top:-16px; left:56px; }
+
+  .c2{ width:80px; height:26px; top:78px; left:180px; opacity:0.7; animation:drift 10s linear infinite reverse; }
+  .c2::before{ width:34px; height:34px; top:-16px; left:10px; }
+  .c2::after{ width:26px; height:26px; top:-10px; left:40px; }
+
+  @keyframes drift{
+    0%{ transform:translateX(0); }
+    50%{ transform:translateX(14px); }
+    100%{ transform:translateX(0); }
   }
 
-  .field-error {
-    color: #d9534f;
-    font-size: 0.78rem;
-    margin-top: 5px;
-    min-height: 14px;
+  .rain-layer{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    transition:opacity 0.5s ease;
+    pointer-events:none;
+  }
+  .rain-layer.active{ opacity:1; }
+
+  .drop{
+    position:absolute;
+    top:-10px;
+    width:2px;
+    height:14px;
+    background:linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.85));
+    border-radius:2px;
+    animation:fall 1.1s linear infinite;
   }
 
-  .predict-btn {
-    width: 100%;
-    padding: 14px;
-    margin-top: 6px;
-    border: none;
-    border-radius: var(--radius-md);
-    background: linear-gradient(135deg, var(--sky-mid), var(--sky-deep));
-    color: #ffffff;
-    font-size: 1.02rem;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-    cursor: pointer;
-    box-shadow: 0 10px 22px rgba(30, 111, 168, 0.35);
-    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+  @keyframes fall{
+    to{ transform:translateY(160px); opacity:0; }
   }
 
-  .predict-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(30, 111, 168, 0.45);
+  .scene.state-clear .sun{ transform:scale(1.12) translateY(-4px); }
+  .scene.state-rain .sun{ opacity:0.15; }
+
+  .scene-bottom{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding-top:18px;
+    border-top:1px solid rgba(255,255,255,0.16);
   }
 
-  .predict-btn:active {
-    transform: translateY(0);
+  .metric-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:0.82rem;
+    color:rgba(255,255,255,0.75);
   }
 
-  .predict-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
+  .metric-row strong{
+    color:#fff;
+    font-weight:600;
+    font-family:var(--font-display);
   }
 
-  .spinner {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(255,255,255,0.5);
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    margin-right: 8px;
-    vertical-align: -2px;
-    animation: spin 0.7s linear infinite;
+  /* ---------- RIGHT: form panel ---------- */
+  .form-side{
+    padding:40px 40px 36px;
+    display:flex;
+    flex-direction:column;
+    background:var(--ice-50);
   }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
+  .form-side h2{
+    font-family:var(--font-display);
+    font-size:1.15rem;
+    font-weight:700;
+    margin:0 0 4px;
+    color:var(--ink);
   }
 
-  .result-card {
-    margin-top: 24px;
-    border-radius: var(--radius-md);
-    padding: 22px 20px;
-    text-align: center;
-    display: none;
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-    transition: opacity 0.35s ease, transform 0.35s ease;
+  .form-side .sub{
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    margin:0 0 26px;
   }
 
-  .result-card.show {
-    display: block;
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  .grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
   }
 
-  .result-card.rain {
-    background: linear-gradient(135deg, #dfeeff, #c9e3fb);
-    border: 1.5px solid #a9cff2;
+  .field{
+    margin-bottom:16px;
+    position:relative;
   }
 
-  .result-card.no-rain {
-    background: linear-gradient(135deg, #fff6e2, #ffedc2);
-    border: 1.5px solid #ffdf9c;
+  .field label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:0.78rem;
+    font-weight:600;
+    color:var(--navy-800);
+    margin-bottom:7px;
+    letter-spacing:0.2px;
   }
 
-  .result-card.error {
-    background: #fdeceb;
-    border: 1.5px solid #f3b6b2;
-    color: #a33a34;
+  .field label .unit{
+    font-weight:400;
+    color:var(--ink-soft);
+    font-size:0.74rem;
   }
 
-  .result-icon {
-    font-size: 2.6rem;
-    line-height: 1;
-    margin-bottom: 8px;
+  .field input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:var(--r-sm);
+    border:1.5px solid var(--line);
+    background:#fff;
+    font-size:0.95rem;
+    font-family:var(--font-body);
+    color:var(--ink);
+    outline:none;
+    transition:border-color 0.18s ease, box-shadow 0.18s ease;
   }
 
-  .result-label {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--sky-deep);
-    margin-bottom: 4px;
+  .field input::placeholder{ color:#a9bdd0; }
+
+  .field input:focus{
+    border-color:var(--blue-600);
+    box-shadow:0 0 0 4px rgba(47,127,199,0.14);
   }
 
-  .result-card.no-rain .result-label {
-    color: #8a5b12;
+  .field input.invalid{
+    border-color:var(--danger);
+    box-shadow:0 0 0 4px rgba(214,69,69,0.1);
   }
 
-  .result-prob {
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    font-weight: 500;
+  .field-error{
+    color:var(--danger);
+    font-size:0.72rem;
+    margin-top:5px;
+    min-height:14px;
+    font-weight:500;
   }
 
-  .result-error-text {
-    font-size: 0.92rem;
-    font-weight: 600;
-    color: #a33a34;
+  .predict-btn{
+    width:100%;
+    padding:14px;
+    margin-top:6px;
+    border:none;
+    border-radius:var(--r-sm);
+    background:linear-gradient(135deg, var(--blue-600), var(--navy-800));
+    color:#fff;
+    font-family:var(--font-display);
+    font-size:0.98rem;
+    font-weight:600;
+    letter-spacing:0.2px;
+    cursor:pointer;
+    box-shadow:0 14px 26px -8px rgba(47,127,199,0.55);
+    transition:transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
   }
 
-  .prob-bar-track {
-    width: 100%;
-    height: 8px;
-    border-radius: 6px;
-    background: rgba(255,255,255,0.6);
-    margin-top: 12px;
-    overflow: hidden;
+  .predict-btn:hover{ transform:translateY(-2px); box-shadow:0 18px 30px -8px rgba(47,127,199,0.65); }
+  .predict-btn:active{ transform:translateY(0); }
+  .predict-btn:disabled{ opacity:0.7; cursor:not-allowed; transform:none; }
+
+  .spinner{
+    display:inline-block;
+    width:13px; height:13px;
+    border:2px solid rgba(255,255,255,0.5);
+    border-top-color:#fff;
+    border-radius:50%;
+    margin-right:8px;
+    vertical-align:-2px;
+    animation:spin 0.7s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .result-card{
+    margin-top:20px;
+    border-radius:var(--r-md);
+    padding:20px 20px;
+    display:none;
+    opacity:0;
+    transform:translateY(10px) scale(0.98);
+    transition:opacity 0.35s ease, transform 0.35s ease;
+  }
+  .result-card.show{ display:block; opacity:1; transform:translateY(0) scale(1); }
+
+  .result-card.rain{ background:#e7f2fb; border:1.5px solid #bfdcf3; }
+  .result-card.no-rain{ background:#fdf3e2; border:1.5px solid #f4d99b; }
+  .result-card.error{ background:var(--danger-bg); border:1.5px solid #f4c2c2; }
+
+  .result-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
   }
 
-  .prob-bar-fill {
-    height: 100%;
-    border-radius: 6px;
-    background: var(--sky-mid);
-    width: 0%;
-    transition: width 0.6s ease;
+  .result-icon{ font-size:2rem; line-height:1; }
+
+  .result-label{
+    font-family:var(--font-display);
+    font-size:1.1rem;
+    font-weight:700;
+    color:var(--navy-800);
+  }
+  .result-card.no-rain .result-label{ color:var(--amber-600); }
+  .result-card.error .result-label{ color:var(--danger); }
+
+  .result-prob{
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    margin-top:2px;
   }
 
-  .result-card.no-rain .prob-bar-fill {
-    background: var(--accent-clear);
+  .prob-bar-track{
+    width:100%;
+    height:7px;
+    border-radius:6px;
+    background:rgba(0,0,0,0.06);
+    margin-top:14px;
+    overflow:hidden;
+  }
+  .prob-bar-fill{
+    height:100%;
+    border-radius:6px;
+    background:var(--rain-500);
+    width:0%;
+    transition:width 0.7s cubic-bezier(.22,.61,.36,1);
+  }
+  .result-card.no-rain .prob-bar-fill{ background:var(--amber-500); }
+
+  .result-error-text{
+    font-size:0.88rem;
+    font-weight:500;
+    color:var(--danger);
+    margin-top:2px;
   }
 
-  footer.note {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.75);
+  footer.note{
+    text-align:center;
+    margin-top:16px;
+    font-size:0.74rem;
+    color:rgba(255,255,255,0.6);
   }
 
-  @media (max-width: 420px) {
-    .card {
-      padding: 28px 22px 24px;
-    }
-    .header h1 {
-      font-size: 1.45rem;
-    }
+  @media (max-width:760px){
+    .panel{ grid-template-columns:1fr; }
+    .scene{ min-height:0; padding:32px 28px; }
+    .sky{ height:110px; }
+    .form-side{ padding:32px 26px 30px; }
+    .grid-2{ grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
 
-<div class="wrapper">
-  <div class="card">
-    <div class="header">
-      <h1>🌦️ Weather Prediction</h1>
-      <p>Predict whether it will rain using Machine Learning</p>
+<div class="stage">
+  <div class="panel">
+
+    <!-- LEFT: animated scene -->
+    <div class="scene" id="scenePanel">
+      <div class="scene-top">
+        <div class="eyebrow"><span class="dot"></span>Live inference</div>
+        <h1>Weather Prediction</h1>
+        <p>Predict whether it will rain using a machine learning model trained on atmospheric readings.</p>
+      </div>
+
+      <div class="sky">
+        <div class="sun" id="sunEl"></div>
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="rain-layer" id="rainLayer"></div>
+      </div>
+
+      <div class="scene-bottom">
+        <div class="metric-row"><span>Model</span><strong id="metricModel">—</strong></div>
+        <div class="metric-row"><span>Prediction</span><strong id="metricPrediction">Awaiting input</strong></div>
+        <div class="metric-row"><span>Confidence</span><strong id="metricConfidence">—</strong></div>
+      </div>
     </div>
 
-    <form id="weatherForm" novalidate>
-      <div class="field">
-        <label for="temp">Temperature (°C)</label>
-        <input type="number" step="any" id="temp" placeholder="Enter temperature" />
-        <div class="field-error" id="tempError"></div>
+    <!-- RIGHT: form -->
+    <div class="form-side">
+      <h2>Enter conditions</h2>
+      <p class="sub">All four fields are required for a prediction.</p>
+
+      <form id="weatherForm" novalidate>
+        <div class="grid-2">
+          <div class="field">
+            <label for="temp">Temperature <span class="unit">°C</span></label>
+            <input type="number" step="any" id="temp" placeholder="Enter temperature" />
+            <div class="field-error" id="tempError"></div>
+          </div>
+
+          <div class="field">
+            <label for="humidity">Humidity <span class="unit">%</span></label>
+            <input type="number" step="any" id="humidity" placeholder="Enter humidity" />
+            <div class="field-error" id="humidityError"></div>
+          </div>
+
+          <div class="field">
+            <label for="wind">Wind speed</label>
+            <input type="number" step="any" id="wind" placeholder="Enter wind speed" />
+            <div class="field-error" id="windError"></div>
+          </div>
+
+          <div class="field">
+            <label for="pressure">Pressure <span class="unit">hPa</span></label>
+            <input type="number" step="any" id="pressure" placeholder="Enter pressure" />
+            <div class="field-error" id="pressureError"></div>
+          </div>
+        </div>
+
+        <button type="submit" class="predict-btn" id="predictBtn">Predict weather</button>
+      </form>
+
+      <div class="result-card" id="resultCard">
+        <div id="resultContent"></div>
       </div>
-
-      <div class="field">
-        <label for="humidity">Humidity (%)</label>
-        <input type="number" step="any" id="humidity" placeholder="Enter humidity" />
-        <div class="field-error" id="humidityError"></div>
-      </div>
-
-      <div class="field">
-        <label for="wind">Wind Speed</label>
-        <input type="number" step="any" id="wind" placeholder="Enter wind speed" />
-        <div class="field-error" id="windError"></div>
-      </div>
-
-      <div class="field">
-        <label for="pressure">Pressure (hPa)</label>
-        <input type="number" step="any" id="pressure" placeholder="Enter pressure" />
-        <div class="field-error" id="pressureError"></div>
-      </div>
-
-      <button type="submit" class="predict-btn" id="predictBtn">Predict Weather</button>
-    </form>
-
-    <div class="result-card" id="resultCard">
-      <div id="resultContent"></div>
     </div>
+
   </div>
 
   <footer class="note">Weather Prediction System · ML-powered forecast demo</footer>
@@ -337,6 +511,24 @@
   const predictBtn = document.getElementById('predictBtn');
   const resultCard = document.getElementById('resultCard');
   const resultContent = document.getElementById('resultContent');
+  const scenePanel = document.getElementById('scenePanel');
+  const rainLayer = document.getElementById('rainLayer');
+  const metricPrediction = document.getElementById('metricPrediction');
+  const metricConfidence = document.getElementById('metricConfidence');
+  const metricModel = document.getElementById('metricModel');
+
+  metricModel.textContent = 'Ready';
+
+  // build rain drops once
+  const DROP_COUNT = 26;
+  for (let i = 0; i < DROP_COUNT; i++) {
+    const d = document.createElement('div');
+    d.className = 'drop';
+    d.style.left = Math.random() * 100 + '%';
+    d.style.animationDelay = (Math.random() * 1.1) + 's';
+    d.style.animationDuration = (0.8 + Math.random() * 0.6) + 's';
+    rainLayer.appendChild(d);
+  }
 
   const fields = [
     { id: 'temp', errorId: 'tempError', label: 'Temperature' },
@@ -384,7 +576,23 @@
     predictBtn.disabled = loading;
     predictBtn.innerHTML = loading
       ? '<span class="spinner"></span>Predicting...'
-      : 'Predict Weather';
+      : 'Predict weather';
+    if (loading) {
+      metricModel.textContent = 'Running…';
+      metricPrediction.textContent = '—';
+      metricConfidence.textContent = '—';
+    }
+  }
+
+  function setScene(state) {
+    scenePanel.classList.remove('state-rain', 'state-clear');
+    rainLayer.classList.remove('active');
+    if (state === 'rain') {
+      scenePanel.classList.add('state-rain');
+      rainLayer.classList.add('active');
+    } else if (state === 'clear') {
+      scenePanel.classList.add('state-clear');
+    }
   }
 
   form.addEventListener('submit', async (e) => {
@@ -423,24 +631,49 @@
 
       if (prediction === 'Rain') {
         showResult(`
-          <div class="result-icon">🌧️</div>
-          <div class="result-label">Rain</div>
-          <div class="result-prob">Probability: ${probPercent}%</div>
+          <div class="result-head">
+            <div class="result-icon">🌧️</div>
+            <div>
+              <div class="result-label">Rain</div>
+              <div class="result-prob">Probability: ${probPercent}%</div>
+            </div>
+          </div>
           <div class="prob-bar-track"><div class="prob-bar-fill" style="width:${probPercent}%"></div></div>
         `, 'rain');
+        setScene('rain');
+        metricModel.textContent = 'Complete';
+        metricPrediction.textContent = 'Rain';
+        metricConfidence.textContent = probPercent + '%';
       } else {
         showResult(`
-          <div class="result-icon">☀️</div>
-          <div class="result-label">No Rain</div>
-          <div class="result-prob">Probability: ${probPercent}%</div>
+          <div class="result-head">
+            <div class="result-icon">☀️</div>
+            <div>
+              <div class="result-label">No Rain</div>
+              <div class="result-prob">Probability: ${probPercent}%</div>
+            </div>
+          </div>
           <div class="prob-bar-track"><div class="prob-bar-fill" style="width:${probPercent}%"></div></div>
         `, 'no-rain');
+        setScene('clear');
+        metricModel.textContent = 'Complete';
+        metricPrediction.textContent = 'No Rain';
+        metricConfidence.textContent = probPercent + '%';
       }
     } catch (err) {
       showResult(`
-        <div class="result-icon">⚠️</div>
-        <div class="result-error-text">Unable to connect to R prediction server.</div>
+        <div class="result-head">
+          <div class="result-icon">⚠️</div>
+          <div>
+            <div class="result-label">Connection error</div>
+            <div class="result-error-text">Unable to connect to R prediction server.</div>
+          </div>
+        </div>
       `, 'error');
+      setScene('default');
+      metricModel.textContent = 'Offline';
+      metricPrediction.textContent = '—';
+      metricConfidence.textContent = '—';
     } finally {
       setLoading(false);
     }
