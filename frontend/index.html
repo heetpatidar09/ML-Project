@@ -8,10 +8,32 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Weather Prediction</title>
+    <title>Customer Health Risk Prediction</title>
 
 
     <style>
+
+        :root {
+            --bg-start: #f0fdf4;
+            --bg-mid: #ecfeff;
+            --bg-end: #eef2ff;
+            --card-bg: rgba(255, 255, 255, 0.82);
+            --surface: #ffffff;
+            --primary: #0ea5e9;
+            --primary-dark: #0369a1;
+            --secondary: #14b8a6;
+            --accent: #8b5cf6;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #dbeafe;
+            --success-bg: #ecfdf5;
+            --success-border: #a7f3d0;
+            --warning-bg: #fff7ed;
+            --warning-border: #fed7aa;
+            --danger-bg: #fef2f2;
+            --danger-border: #fecaca;
+            --shadow: 0 22px 55px rgba(15, 23, 42, 0.12);
+        }
 
         * {
             box-sizing: border-box;
@@ -20,408 +42,303 @@
         }
 
         body {
-
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
-
+            font-family: Arial, Helvetica, sans-serif;
             min-height: 100vh;
-
             background:
-                linear-gradient(
-                    135deg,
-                    #dbeafe,
-                    #f0f9ff,
-                    #e0f2fe
-                );
-
+                radial-gradient(circle at top left, rgba(20, 184, 166, 0.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.18), transparent 26%),
+                linear-gradient(135deg, var(--bg-start), var(--bg-mid), var(--bg-end));
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
             padding: 30px;
+            color: var(--text);
         }
-
 
         .container {
-
             width: 100%;
-
-            max-width: 900px;
+            max-width: 980px;
         }
-
 
         .header {
-
             text-align: center;
-
-            margin-bottom: 30px;
+            margin-bottom: 26px;
         }
-
 
         .header .icon {
-
-            font-size: 60px;
-
-            margin-bottom: 10px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 92px;
+            height: 92px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.14), rgba(139, 92, 246, 0.14));
+            box-shadow: 0 18px 38px rgba(14, 165, 233, 0.12);
+            font-size: 42px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
         }
-
 
         .header h1 {
-
-            font-size: 38px;
-
-            color: #0f172a;
-
-            margin-bottom: 8px;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            color: var(--text);
+            margin-bottom: 10px;
+            letter-spacing: -0.05em;
         }
-
 
         .header p {
-
-            color: #64748b;
-
-            font-size: 16px;
+            color: var(--muted);
+            font-size: 1.02rem;
+            line-height: 1.7;
+            max-width: 640px;
+            margin: 0 auto;
         }
 
-
-        .card {
-
-            background: white;
-
-            border-radius: 22px;
-
-            padding: 35px;
-
-            box-shadow:
-                0 20px 50px
-                rgba(15, 23, 42, 0.12);
-        }
-
-
-        .form-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, 1fr);
-
-            gap: 22px;
-        }
-
-
-        .form-group {
-
+        .header-badges {
             display: flex;
-
-            flex-direction: column;
-        }
-
-
-        .form-group label {
-
-            font-weight: 600;
-
-            color: #334155;
-
-            margin-bottom: 8px;
-        }
-
-
-        .input-wrapper {
-
-            position: relative;
-        }
-
-
-        .input-wrapper input {
-
-            width: 100%;
-
-            padding: 15px;
-
-            border:
-                2px solid #e2e8f0;
-
-            border-radius: 12px;
-
-            font-size: 16px;
-
-            outline: none;
-
-            transition: 0.2s;
-        }
-
-
-        .input-wrapper input:focus {
-
-            border-color: #0284c7;
-
-            box-shadow:
-                0 0 0 4px
-                rgba(2, 132, 199, 0.1);
-        }
-
-
-        .unit {
-
-            position: absolute;
-
-            right: 15px;
-
-            top: 50%;
-
-            transform:
-                translateY(-50%);
-
-            color: #64748b;
-
-            font-size: 14px;
-        }
-
-
-        .predict-btn {
-
-            width: 100%;
-
-            margin-top: 28px;
-
-            padding: 16px;
-
-            border: none;
-
-            border-radius: 12px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #0284c7,
-                    #0369a1
-                );
-
-            color: white;
-
-            font-size: 17px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-
-            transition: 0.2s;
-        }
-
-
-        .predict-btn:hover {
-
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                0 10px 25px
-                rgba(2, 132, 199, 0.25);
-        }
-
-
-        .predict-btn:disabled {
-
-            opacity: 0.7;
-
-            cursor: not-allowed;
-
-            transform: none;
-        }
-
-
-        .result {
-
-            margin-top: 25px;
-
-            padding: 25px;
-
-            border-radius: 16px;
-
-            display: none;
-
-            text-align: center;
-        }
-
-
-        .result.show {
-
-            display: block;
-        }
-
-
-        .result.rain {
-
-            display: block;
-
-            background: #eff6ff;
-
-            border:
-                1px solid #bfdbfe;
-        }
-
-
-        .result.no-rain {
-
-            display: block;
-
-            background: #fefce8;
-
-            border:
-                1px solid #fde68a;
-        }
-
-
-        .result.error {
-
-            display: block;
-
-            background: #fef2f2;
-
-            border:
-                1px solid #fecaca;
-        }
-
-
-        .result-icon {
-
-            font-size: 48px;
-
-            margin-bottom: 10px;
-        }
-
-
-        .result-title {
-
-            font-size: 25px;
-
-            font-weight: 700;
-
-            color: #0f172a;
-
-            margin-bottom: 10px;
-        }
-
-
-        .probability {
-
-            font-size: 16px;
-
-            color: #475569;
-
-            margin-bottom: 12px;
-        }
-
-
-        .progress {
-
-            width: 100%;
-
-            height: 12px;
-
-            background: #e2e8f0;
-
-            border-radius: 20px;
-
-            overflow: hidden;
-        }
-
-
-        .progress-bar {
-
-            height: 100%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #38bdf8,
-                    #0284c7
-                );
-
-            border-radius: 20px;
-
-            transition:
-                width 0.6s ease;
-        }
-
-
-        .error-message {
-
-            color: #b91c1c;
-
-            font-weight: 600;
-
-            line-height: 1.5;
-        }
-
-
-        .spinner {
-
-            display: inline-block;
-
-            width: 18px;
-
-            height: 18px;
-
-            border:
-                3px solid
-                rgba(255,255,255,0.4);
-
-            border-top-color: white;
-
-            border-radius: 50%;
-
-            animation:
-                spin 0.7s linear infinite;
-
-            vertical-align: middle;
-
-            margin-right: 8px;
-        }
-
-
-        @keyframes spin {
-
-            to {
-                transform:
-                    rotate(360deg);
-            }
-        }
-
-
-        .footer {
-
-            text-align: center;
-
-            color: #64748b;
-
-            font-size: 13px;
-
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-top: 18px;
         }
 
+        .badge {
+            border-radius: 999px;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            color: #0f766e;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
 
-        @media (max-width: 650px) {
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
 
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--accent));
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 0.96rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: 15px 48px 15px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            font-size: 1rem;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text);
+            transition: all 0.2s ease;
+            box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.02);
+        }
+
+        .input-wrapper select {
+            appearance: none;
+            padding-right: 42px;
+            cursor: pointer;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+        }
+
+        .unit {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .predict-btn {
+            width: 100%;
+            margin-top: 26px;
+            padding: 17px 18px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-size: 1.04rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            box-shadow: 0 16px 28px rgba(91, 33, 182, 0.22);
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 32px rgba(2, 105, 161, 0.28);
+            filter: brightness(1.02);
+        }
+
+        .predict-btn:disabled {
+            opacity: 0.75;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result {
+            margin-top: 26px;
+            padding: 24px 20px;
+            border-radius: 18px;
+            display: none;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result.rain {
+            display: block;
+            background: linear-gradient(135deg, rgba(255, 247, 237, 0.95), rgba(255, 255, 255, 0.9));
+            border-color: var(--warning-border);
+        }
+
+        .result.no-rain {
+            display: block;
+            background: linear-gradient(135deg, rgba(236, 253, 245, 0.96), rgba(255, 255, 255, 0.9));
+            border-color: var(--success-border);
+        }
+
+        .result.error {
+            display: block;
+            background: var(--danger-bg);
+            border-color: var(--danger-border);
+        }
+
+        .result-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-size: clamp(1.35rem, 2vw, 1.9rem);
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .probability {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 12px;
+            background: rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #0ea5e9, #2563eb);
+            border-radius: 999px;
+            transition: width 0.6s ease;
+        }
+
+        .error-message {
+            color: #b91c1c;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255,255,255,0.38);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-top: 18px;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 760px) {
             body {
-                padding: 15px;
+                padding: 18px;
+            }
+
+            .header {
+                margin-bottom: 22px;
             }
 
             .card {
-                padding: 22px;
+                padding: 22px 18px;
+                border-radius: 22px;
             }
 
             .form-grid {
                 grid-template-columns: 1fr;
+                gap: 18px;
             }
 
-            .header h1 {
-                font-size: 30px;
+            .result {
+                padding: 22px 16px;
             }
         }
 
@@ -438,14 +355,20 @@
 
         <div class="header">
 
-            <div class="icon">🌦️</div>
+            <div class="icon">🩺</div>
 
-            <h1>Weather Prediction</h1>
+            <h1>Customer Health Risk Prediction</h1>
 
             <p>
-                Predict whether rain is expected
-                using machine learning
+                Predict whether a customer is at
+                high health risk using machine learning
             </p>
+
+            <div class="header-badges">
+                <span class="badge">AI Powered</span>
+                <span class="badge">4 Models</span>
+                <span class="badge">Health Analytics</span>
+            </div>
 
         </div>
 
@@ -453,32 +376,33 @@
         <div class="card">
 
 
-            <form id="weatherForm">
+            <form id="customerForm">
 
 
                 <div class="form-grid">
 
 
-                    <!-- Temperature -->
+                    <!-- Age -->
 
                     <div class="form-group">
 
-                        <label for="temp">
-                            Temperature
+                        <label for="age">
+                            Customer Age
                         </label>
 
                         <div class="input-wrapper">
 
                             <input
                                 type="number"
-                                id="temp"
-                                placeholder="e.g. 26"
-                                step="0.1"
+                                id="age"
+                                placeholder="e.g. 34"
+                                min="18"
+                                step="1"
                                 required
                             >
 
                             <span class="unit">
-                                °C
+                                yrs
                             </span>
 
                         </div>
@@ -486,56 +410,27 @@
                     </div>
 
 
-                    <!-- Humidity -->
+                    <!-- BMI -->
 
                     <div class="form-group">
 
-                        <label for="humidity">
-                            Humidity
+                        <label for="bmi">
+                            BMI
                         </label>
 
                         <div class="input-wrapper">
 
                             <input
                                 type="number"
-                                id="humidity"
-                                placeholder="e.g. 82"
-                                min="0"
-                                max="100"
-                                step="0.1"
-                                required
-                            >
-
-                            <span class="unit">
-                                %
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Wind -->
-
-                    <div class="form-group">
-
-                        <label for="wind">
-                            Wind Speed
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <input
-                                type="number"
-                                id="wind"
-                                placeholder="e.g. 9"
+                                id="bmi"
+                                placeholder="e.g. 27.5"
                                 min="0"
                                 step="0.1"
                                 required
                             >
 
                             <span class="unit">
-                                km/h
+                                BMI
                             </span>
 
                         </div>
@@ -543,26 +438,55 @@
                     </div>
 
 
-                    <!-- Pressure -->
+                    <!-- Blood Pressure -->
 
                     <div class="form-group">
 
-                        <label for="pressure">
-                            Atmospheric Pressure
+                        <label for="blood_pressure">
+                            Blood Pressure
                         </label>
 
                         <div class="input-wrapper">
 
                             <input
                                 type="number"
-                                id="pressure"
-                                placeholder="e.g. 1011"
+                                id="blood_pressure"
+                                placeholder="e.g. 128"
+                                min="0"
+                                step="1"
+                                required
+                            >
+
+                            <span class="unit">
+                                mmHg
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Exercise Hours -->
+
+                    <div class="form-group">
+
+                        <label for="exercise_hours">
+                            Exercise Hours / Week
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <input
+                                type="number"
+                                id="exercise_hours"
+                                placeholder="e.g. 3"
+                                min="0"
                                 step="0.1"
                                 required
                             >
 
                             <span class="unit">
-                                hPa
+                                hrs
                             </span>
 
                         </div>
@@ -573,12 +497,34 @@
                 </div>
 
 
+                <div class="form-group" style="grid-column: 1 / -1;">
+
+                    <label for="modelType">
+                        Prediction Model
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <select
+                            id="modelType"
+                        >
+                            <option value="logistic">Linear Regression</option>
+                            <option value="decision_tree">Decision Tree</option>
+                            <option value="random_forest">Random Forest</option>
+                            <option value="svm">KNN</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+
                 <button
                     type="submit"
                     class="predict-btn"
                     id="predictBtn"
                 >
-                    Predict Weather
+                    Predict Health Risk
                 </button>
 
 
@@ -598,7 +544,8 @@
 
         <div class="footer">
 
-            R Logistic Regression •
+            Customer Health •
+            R Models •
             Python Flask •
             HTML/CSS/JavaScript
 
@@ -612,12 +559,17 @@
 
         const form =
             document.getElementById(
-                "weatherForm"
+                "customerForm"
             );
 
         const predictBtn =
             document.getElementById(
                 "predictBtn"
+            );
+
+        const modelType =
+            document.getElementById(
+                "modelType"
             );
 
         const result =
@@ -632,39 +584,39 @@
 
         function validateForm() {
 
-            const temp =
+            const age =
                 Number(
                     document.getElementById(
-                        "temp"
+                        "age"
                     ).value
                 );
 
-            const humidity =
+            const bmi =
                 Number(
                     document.getElementById(
-                        "humidity"
+                        "bmi"
                     ).value
                 );
 
-            const wind =
+            const bloodPressure =
                 Number(
                     document.getElementById(
-                        "wind"
+                        "blood_pressure"
                     ).value
                 );
 
-            const pressure =
+            const exerciseHours =
                 Number(
                     document.getElementById(
-                        "pressure"
+                        "exercise_hours"
                     ).value
                 );
 
 
-            if (!Number.isFinite(temp)) {
+            if (!Number.isFinite(age) || age < 18) {
 
                 showError(
-                    "Please enter a valid temperature."
+                    "Please enter a valid customer age above 18."
                 );
 
                 return false;
@@ -672,13 +624,12 @@
 
 
             if (
-                !Number.isFinite(humidity) ||
-                humidity < 0 ||
-                humidity > 100
+                !Number.isFinite(bmi) ||
+                bmi <= 0
             ) {
 
                 showError(
-                    "Humidity must be between 0% and 100%."
+                    "Please enter a valid BMI value."
                 );
 
                 return false;
@@ -686,22 +637,22 @@
 
 
             if (
-                !Number.isFinite(wind) ||
-                wind < 0
+                !Number.isFinite(bloodPressure) ||
+                bloodPressure <= 0
             ) {
 
                 showError(
-                    "Please enter a valid wind speed."
+                    "Please enter a valid blood pressure value."
                 );
 
                 return false;
             }
 
 
-            if (!Number.isFinite(pressure)) {
+            if (!Number.isFinite(exerciseHours) || exerciseHours < 0) {
 
                 showError(
-                    "Please enter a valid pressure."
+                    "Please enter a valid exercise-hours value."
                 );
 
                 return false;
@@ -744,7 +695,7 @@
                 </div>
 
                 <div class="probability">
-                    Rain probability:
+                    Health risk probability:
                     <strong>${percent}%</strong>
                 </div>
 
@@ -803,29 +754,31 @@
 
                 const payload = {
 
-                    temp: Number(
+                    age: Number(
                         document.getElementById(
-                            "temp"
+                            "age"
                         ).value
                     ),
 
-                    humidity: Number(
+                    bmi: Number(
                         document.getElementById(
-                            "humidity"
+                            "bmi"
                         ).value
                     ),
 
-                    wind: Number(
+                    blood_pressure: Number(
                         document.getElementById(
-                            "wind"
+                            "blood_pressure"
                         ).value
                     ),
 
-                    pressure: Number(
+                    exercise_hours: Number(
                         document.getElementById(
-                            "pressure"
+                            "exercise_hours"
                         ).value
-                    )
+                    ),
+
+                    model: modelType.value
 
                 };
 
@@ -884,13 +837,13 @@
 
                     if (
                         data.prediction ===
-                        "Rain"
+                        "High Risk"
                     ) {
 
                         showResult(
                             "rain",
-                            "🌧️",
-                            "Rain Expected",
+                            "⚠️",
+                            "High Health Risk Detected",
                             data.probability
                         );
 
@@ -898,8 +851,8 @@
 
                         showResult(
                             "no-rain",
-                            "☀️",
-                            "No Rain Expected",
+                            "✅",
+                            "Low Health Risk",
                             data.probability
                         );
 
@@ -921,7 +874,7 @@
                         false;
 
                     predictBtn.innerHTML =
-                        "Predict Weather";
+                        "Predict Health Risk";
 
                 }
 
